@@ -4,8 +4,8 @@
 void UBullCowCartridge::BeginPlay() // When the game starts
 {
     Super::BeginPlay();
-    PrintLine(TEXT("Welcome to Cows!"));
-    PrintLine(TEXT("Please press <Enter> to continue:"));
+    PrintLine(TEXT("Welcome to Bull Cows!"));
+    PrintLine(TEXT("Please guess the 7 letter word!"));
     InitGame();
     //TODO: Prompt the Player for a guess
 }
