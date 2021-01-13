@@ -35,7 +35,10 @@ void UBullCowCartridge::ProcessGuess(const FString& Guess)
         PrintLine(TEXT("Sorry! Your guess is not %i letters!\nTry again."), HiddenWord.Len());
         return;
     }
-    //TODO: Check if Guess is an isogram
+    if (!IsIsogram(Guess)) {
+        PrintLine(TEXT("Your guess, %s, is not a valid isogram. Try again!\n"), *Guess);
+        return;
+    }
     PrintLine("Sorry! Wrong guess! Try again.");
     PrintLine(TEXT("You still have %i lives."), --Lives);
     if (Lives <= 0) {
@@ -64,4 +67,18 @@ void UBullCowCartridge::EndGame()
 {
     bGameOver = true;
     PrintLine("Press <ENTER> to continue.");
+}
+
+bool UBullCowCartridge::IsIsogram(const FString& Word)
+{
+    for (int i=0; i < Word.Len(); i++)
+    {
+        char currentLetter = Word[i];
+        for (int j=i+1; j < Word.Len(); j++){
+            if (currentLetter == Word[j]) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
