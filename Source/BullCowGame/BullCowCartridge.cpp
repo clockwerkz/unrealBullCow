@@ -5,7 +5,6 @@ void UBullCowCartridge::BeginPlay() // When the game starts
 {
     Super::BeginPlay();
     InitGame();
-    PrintLine(TEXT("The Hidden Word is %s, it is %i\ncharacters long."), *HiddenWord, HiddenWord.Len()); //Debug Line
 }
 
 void UBullCowCartridge::OnInput(const FString &Input) // When the player hits enter
@@ -23,37 +22,26 @@ void UBullCowCartridge::OnInput(const FString &Input) // When the player hits en
         }
         else 
         {
-            Lives--;
-            if (Lives <= 0) {
-                EndGame();  
-            } else {
-                if (Input.Len() != HiddenWord.Len()) {
-                    PrintLine(TEXT("Sorry! Your guess is not %i letters!\nTry again."), HiddenWord.Len());
-                } else {
-                    PrintLine("Sorry! Wrong guess! Try again.");
-                }
-                PrintLine(TEXT("You are down to %i lives."), Lives);
-            }
+            ProcessGuess(Input);
         }
     }
 
-    /*  
-    Check if input is an isogram
-    If no:
-    Prompt to Guess again
-    If Yes:
-    Check if input matches hiddenword
-    Deduct a life
-    Check lives >0
-    If yes:
-    GuessAgain
-    Show lives left
-    If No:
-    Game Over show HiddenWord?
-    Prompt to play again
-    Yes -> Play Again
-    No -> Exit 
-    */
+
+}
+
+void UBullCowCartridge::ProcessGuess(const FString& Guess)
+{
+    if (Guess.Len() != HiddenWord.Len()) {
+        PrintLine(TEXT("Sorry! Your guess is not %i letters!\nTry again."), HiddenWord.Len());
+        return;
+    }
+    //TODO: Check if Guess is an isogram
+    PrintLine("Sorry! Wrong guess! Try again.");
+    PrintLine(TEXT("You still have %i lives."), --Lives);
+    if (Lives <= 0) {
+        PrintLine(TEXT("Game over!\nThe hidden word was %s.\n"), *HiddenWord);
+        return EndGame();  
+    }
 }
 
 void UBullCowCartridge::InitGame()
@@ -62,7 +50,7 @@ void UBullCowCartridge::InitGame()
     Setting up the game
     TODO Assign a random isogram as the HiddenWord
  */
-    HiddenWord = TEXT("dialogue");
+    HiddenWord = TEXT("cake");
     Lives = HiddenWord.Len();
     bGameOver = false;
 
@@ -75,5 +63,5 @@ void UBullCowCartridge::InitGame()
 void UBullCowCartridge::EndGame()
 {
     bGameOver = true;
-    PrintLine("Game over! Press <ENTER> to continue.");
+    PrintLine("Press <ENTER> to continue.");
 }
