@@ -39,7 +39,20 @@ void UBullCowCartridge::ProcessGuess(const FString& Guess)
         PrintLine(TEXT("Your guess, %s, is not a valid isogram. Try again!\n"), *Guess);
         return;
     }
-    PrintLine("Sorry! Wrong guess! Try again.");
+    int bulls = 0;
+    int cows = 0;
+    for (int i=0; i < Guess.Len(); i++) {
+        if (Guess[i] == HiddenWord[i]) {
+            bulls++;
+        } else {
+            for (int j=0; j < HiddenWord.Len(); j++) {
+                if (Guess[i] == HiddenWord[j]) {
+                    cows++;
+                }
+            }
+        }
+    }
+    PrintLine(TEXT("There are %i bulls and %i cows in your guess! Try Again."), bulls, cows);
     PrintLine(TEXT("You still have %i lives."), --Lives);
     if (Lives <= 0) {
         PrintLine(TEXT("Game over!\nThe hidden word was %s.\n"), *HiddenWord);
