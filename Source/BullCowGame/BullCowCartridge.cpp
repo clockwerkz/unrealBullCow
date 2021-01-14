@@ -1,9 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "BullCowCartridge.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
 
 void UBullCowCartridge::BeginPlay() // When the game starts
 {
     Super::BeginPlay();
+    const FString WordListPath = FPaths::ProjectContentDir() / TEXT("WordLists/HiddenWordList.txt");
+    FFileHelper::LoadFileToStringArray(HiddenWordList, *WordListPath);
+    PrintLine(TEXT("Number of words loaded into WordList: %i"), HiddenWordList.Num());
     InitGame();
 }
 
@@ -39,20 +44,7 @@ void UBullCowCartridge::ProcessGuess(const FString& Guess)
         PrintLine(TEXT("Your guess, %s, is not a valid isogram. Try again!\n"), *Guess);
         return;
     }
-    int bulls = 0;
-    int cows = 0;
-    for (int i=0; i < Guess.Len(); i++) {
-        if (Guess[i] == HiddenWord[i]) {
-            bulls++;
-        } else {
-            for (int j=0; j < HiddenWord.Len(); j++) {
-                if (Guess[i] == HiddenWord[j]) {
-                    cows++;
-                }
-            }
-        }
-    }
-    PrintLine(TEXT("There are %i bulls and %i cows in your guess! Try Again."), bulls, cows);
+    CountBullsAndCows(Guess);
     PrintLine(TEXT("You still have %i lives."), --Lives);
     if (Lives <= 0) {
         PrintLine(TEXT("Game over!\nThe hidden word was %s.\n"), *HiddenWord);
@@ -66,7 +58,8 @@ void UBullCowCartridge::InitGame()
     Setting up the game
     TODO Assign a random isogram as the HiddenWord
  */
-    HiddenWord = TEXT("cake");
+
+    HiddenWord = TEXT("chosen");
     Lives = HiddenWord.Len();
     bGameOver = false;
 
@@ -82,7 +75,7 @@ void UBullCowCartridge::EndGame()
     PrintLine("Press <ENTER> to continue.");
 }
 
-bool UBullCowCartridge::IsIsogram(const FString& Word)
+bool UBullCowCartridge::IsIsogram(const FString& Word) const
 {
     for (int i=0; i < Word.Len(); i++)
     {
@@ -94,4 +87,22 @@ bool UBullCowCartridge::IsIsogram(const FString& Word)
         }
     }
     return true;
+}
+
+void UBullCowCartridge::CountBullsAndCows(const FString& Word) const
+{
+    int bulls = 0;
+    int cows = 0;
+    for (int i=0; i < Word.Len(); i++) {
+        if (Word[i] == HiddenWord[i]) {
+            bulls++;
+        } else {
+            for (int j=0; j < HiddenWord.Len(); j++) {
+                if (Word[i] == HiddenWord[j]) {
+                    cows++;
+                }
+            }
+        }
+    }
+    PrintLine(TEXT("There are %i bulls and %i cows in your guess! Try Again."), bulls, cows);
 }
