@@ -6,10 +6,23 @@
 void UBullCowCartridge::BeginPlay() // When the game starts
 {
     Super::BeginPlay();
-    const FString WordListPath = FPaths::ProjectContentDir() / TEXT("WordLists/HiddenWordList.txt");
-    FFileHelper::LoadFileToStringArray(HiddenWordList, *WordListPath);
-    PrintLine(TEXT("Number of words loaded into WordList: %i"), HiddenWordList.Num());
+    HiddenWordList = GetValidWords();
+    PrintLine(TEXT("Number of isogram words in WordList: %i"), HiddenWordList.Num());
     InitGame();
+}
+
+TArray<FString> UBullCowCartridge::GetValidWords() const
+{
+    const FString WordListPath = FPaths::ProjectContentDir() / TEXT("WordLists/HiddenWordList.txt");
+    TArray <FString> AllWords, FilteredWords;
+    FFileHelper::LoadFileToStringArray(AllWords, *WordListPath);
+    for (FString Word : AllWords)
+    {
+        if (IsIsogram(Word) && Word.Len() >= 4 && Word.Len() <= 8){
+            FilteredWords.Emplace(Word);
+        }
+    }
+    return FilteredWords;
 }
 
 void UBullCowCartridge::OnInput(const FString &Input) // When the player hits enter
