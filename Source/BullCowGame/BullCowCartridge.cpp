@@ -57,7 +57,9 @@ void UBullCowCartridge::ProcessGuess(const FString& Guess)
         PrintLine(TEXT("Your guess, %s, is not a valid isogram. Try again!\n"), *Guess);
         return;
     }
-    CountBullsAndCows(Guess);
+    int32 BullCount, CowCount;
+    GetBullCows(Guess, BullCount, CowCount);
+    PrintLine(TEXT("There are %i bulls and %i cows in your guess! Try Again."), BullCount, CowCount);
     PrintLine(TEXT("You still have %i lives."), --Lives);
     if (Lives <= 0) {
         PrintLine(TEXT("Game over!\nThe hidden word was %s.\n"), *HiddenWord);
@@ -88,7 +90,7 @@ void UBullCowCartridge::EndGame()
     PrintLine("Press <ENTER> to continue.");
 }
 
-bool UBullCowCartridge::IsIsogram(const FString& Word) const
+bool UBullCowCartridge::IsIsogram(const FString& Word)
 {
     for (int i=0; i < Word.Len(); i++)
     {
@@ -102,20 +104,20 @@ bool UBullCowCartridge::IsIsogram(const FString& Word) const
     return true;
 }
 
-void UBullCowCartridge::CountBullsAndCows(const FString& Word) const
+void UBullCowCartridge::GetBullCows(const FString& Word, int32& BullCount, int32& CowCount)
 {
-    int bulls = 0;
-    int cows = 0;
+    BullCount = 0;
+    CowCount = 0;
     for (int i=0; i < Word.Len(); i++) {
         if (Word[i] == HiddenWord[i]) {
-            bulls++;
+            BullCount++;
         } else {
             for (int j=0; j < HiddenWord.Len(); j++) {
                 if (Word[i] == HiddenWord[j]) {
-                    cows++;
+                    CowCount++;
                 }
             }
         }
     }
-    PrintLine(TEXT("There are %i bulls and %i cows in your guess! Try Again."), bulls, cows);
+
 }
