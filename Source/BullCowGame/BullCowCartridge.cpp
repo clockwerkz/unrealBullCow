@@ -71,8 +71,8 @@ void UBullCowCartridge::InitGame()
     Setting up the game
     TODO Assign a random isogram as the HiddenWord
  */
-
-    HiddenWord = TEXT("chosen");
+    int32 randomChoice = FMath::RandRange(0, HiddenWordList.Num()-1);
+    HiddenWord = HiddenWordList[randomChoice];
     Lives = HiddenWord.Len();
     bGameOver = false;
 
